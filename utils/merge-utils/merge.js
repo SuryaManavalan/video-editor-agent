@@ -1,35 +1,23 @@
 export const mergeDiarizationWithTranscript = (diarizationSegments, transcriptSegments) => {
   const merged = [];
 
-  for (const seg of transcriptSegments) {
-    // Calculate intersection for each diarization segment
-    const intersections = diarizationSegments.map(dia => ({
-      speaker: dia.speaker,
-      intersection: Math.min(dia.end, seg.end) - Math.max(dia.start, seg.start)
-    }));
+  // Use diarization timing with transcript text
+  for (const dia of diarizationSegments) {
+    // Find transcripts that overlap with this diarization segment
+    const overlappingTranscripts = transcriptSegments.filter(seg => 
+      seg.start < dia.end && seg.end > dia.start
+    );
 
-    // Group by speaker and sum intersections
-    const speakerScores = {};
-    for (const { speaker, intersection } of intersections) {
-      if (!speakerScores[speaker]) speakerScores[speaker] = 0;
-      speakerScores[speaker] += intersection;
-    }
-
-    // Find speaker with maximum intersection
-    let maxSpeaker = null;
-    let maxScore = -Infinity;
-    for (const [speaker, score] of Object.entries(speakerScores)) {
-      if (score > maxScore) {
-        maxScore = score;
-        maxSpeaker = speaker;
-      }
-    }
+    // Combine text from overlapping transcripts
+    const text = overlappingTranscripts
+      .map(seg => seg.text.trim())
+      .join(' ');
 
     merged.push({
-      start: seg.start,
-      end: seg.end,
-      text: seg.text,
-      speaker: maxSpeaker || 'UNKNOWN'
+      start: dia.start,
+      end: dia.end,
+      text: text || '',
+      speaker: dia.speaker
     });
   }
 
