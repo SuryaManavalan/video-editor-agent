@@ -102,11 +102,7 @@ export const diarize = async () => {
 
     console.log(`Polling job ${jobId}...`);
     const diarizationResult = await pollJob(jobId);
-    
-    // Extract segments array from the result (could be result.segments or result itself)
-    const diarizationSegments = Array.isArray(diarizationResult) 
-      ? diarizationResult 
-      : diarizationResult.segments || diarizationResult.output || [];
+    const diarizationSegments = diarizationResult.diarization || [];
 
     console.log(`Transcribing ${audio}...`);
     const transcription = await transcribe(audioPath);
