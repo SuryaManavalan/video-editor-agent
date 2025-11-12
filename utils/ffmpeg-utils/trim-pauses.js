@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import { readdir, readFile, access } from 'fs/promises';
 import { join, parse } from 'path';
 import { constants } from 'fs';
+import { rewriteTranscriptionAfterTrimming } from '../json-utils/rewrite-transcription-pause-trimming.js';
 
 const execAsync = promisify(exec);
 
@@ -81,6 +82,9 @@ export const trimPauses = async () => {
     console.log(`Found ${segments.length} segment(s) to keep (removing ${PAUSE_THRESHOLD}s+ pauses)`);
 
     const mergedSegments = segments;
+
+    // Rewrite transcription with new timestamps after trimming
+    await rewriteTranscriptionAfterTrimming(diarizedData, mergedSegments, baseName);
 
     // If only one segment, just trim it
     if (mergedSegments.length === 1) {
