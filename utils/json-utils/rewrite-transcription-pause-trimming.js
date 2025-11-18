@@ -1,5 +1,6 @@
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import { addIdNumbers } from './add-id-numbers.js';
 
 const DIARIZED_DIR = './FILES/DIARIZED_TRANSCRIBED';
 
@@ -30,8 +31,11 @@ export const rewriteTranscriptionAfterTrimming = async (diarizedData, segments, 
     cumulativeTime += (segment.end - segment.start);
   }
 
+  // Add ID numbers to each transcription entry
+  const transcriptionWithIds = addIdNumbers(rewrittenTranscription);
+
   // Save rewritten transcription
   const rewrittenPath = join(DIARIZED_DIR, `${baseName}_pauses_trimmed.json`);
-  await writeFile(rewrittenPath, JSON.stringify(rewrittenTranscription, null, 2));
+  await writeFile(rewrittenPath, JSON.stringify(transcriptionWithIds, null, 2));
   console.log(`Saved updated transcription → ${baseName}_pauses_trimmed.json`);
 };

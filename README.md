@@ -9,6 +9,8 @@ A simple Node.js workflow for extracting audio from videos, performing speaker d
 - 📝 Audio transcription using OpenAI Whisper
 - 🔀 Automatic merging of diarization and transcription results
 - ✂️ Trim pauses longer than 5 seconds from videos
+- 🤖 AI-powered removal of redundant takes and speech mistakes
+- 🎥 Automatic video cutting based on cleaned transcription
 - ⚡ Skip already processed files automatically
 
 ## File Structure
@@ -52,6 +54,8 @@ This will:
 4. Merge results and save to `DIARIZED_TRANSCRIBED/`
 5. Trim pauses longer than 5 seconds from videos
 6. Generate updated transcription with adjusted timestamps
+7. Use AI to identify and remove redundant takes/mistakes
+8. Cut videos to match cleaned transcriptions
 
 ## Output Format
 
@@ -82,12 +86,23 @@ Each processed video generates JSON files with speaker-attributed transcriptions
 - Reflects removed pauses (>5 seconds)
 - Use this for syncing with the processed video in `VIDEO_PROCESSING/`
 
+**`{video}_cleaned.json`** - AI-cleaned transcription with redundant segments removed:
+- Removes repetitive takes and speech mistakes
+- Preserves segments with maximum information
+- Use this for the final cleaned video
+
 ### Video Files
 
 **`VIDEO_PROCESSING/{video}_trimmed.{ext}`** - Video with long pauses removed:
 - Automatically removes pauses longer than 5 seconds
 - Maintains 0.5-second cushion before/after speech segments
 - Smooth transitions between clips
+
+**`VIDEO_PROCESSING/{video}_cleaned.{ext}`** - Final video with redundant segments removed:
+- AI-identified redundant takes and mistakes are cut out
+- Only the best takes are kept
+- Maintains 0.5-second cushion for smooth flow
+- Ready for publishing or further editing
 
 ## Requirements
 
